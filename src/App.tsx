@@ -1,5 +1,5 @@
 import { Hero } from './sections/hero';
-import { Navbar } from './components/Navbar.tsx';
+import { Navbar } from './components/Navbar';
 import { Container } from './components/Container';
 import { theme } from './theme';
 
