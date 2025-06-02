@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Float, MeshDistortMaterial } from '@react-three/drei';
 import * as THREE from 'three';
+import { theme } from '../../../theme';
 
 interface BrainModelProps {
   isHovered: boolean;
@@ -10,6 +11,10 @@ interface BrainModelProps {
 interface OrbitingParticlesProps {
   count: number;
   radius: number;
+}
+
+interface HeroModelProps {
+  isHovered: boolean;
 }
 
 // Floating brain model representing AI and smart education
@@ -52,7 +57,7 @@ const BrainModel = ({ isHovered }: BrainModelProps) => {
       >
         <sphereGeometry args={[1.2, 64, 64]} />
         <MeshDistortMaterial
-          color="#4f46e5"
+          color="#2563EB"
           attach="material"
           distort={0.3}
           speed={2}
@@ -101,8 +106,8 @@ const OrbitingParticles = ({ count, radius }: OrbitingParticlesProps) => {
         >
           <sphereGeometry args={[0.1, 16, 16]} />
           <meshStandardMaterial 
-            color={i % 2 === 0 ? "#60a5fa" : "#8b5cf6"} 
-            emissive={i % 2 === 0 ? "#60a5fa" : "#8b5cf6"} 
+            color={i % 2 === 0 ? "#0D9488" : "#2563EB"}
+            emissive={i % 2 === 0 ? "#0D9488" : "#2563EB"}
             emissiveIntensity={0.5}
           />
         </mesh>
@@ -112,15 +117,9 @@ const OrbitingParticles = ({ count, radius }: OrbitingParticlesProps) => {
 };
 
 // Main component that wraps the 3D scene
-export const HeroModel = () => {
-  const [isHovered, setIsHovered] = useState(false);
-  
+export const HeroModel = ({ isHovered }: HeroModelProps) => {
   return (
-    <div 
-      className="w-full h-full"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="w-full h-full">
       <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
         <ambientLight intensity={0.5} />
         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />

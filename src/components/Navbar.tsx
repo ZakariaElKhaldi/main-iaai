@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Button } from './Button';
+import { theme } from '../theme';
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -22,7 +24,7 @@ export const Navbar = () => {
   return (
     <motion.header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-indigo-950/90 backdrop-blur-md shadow-lg' : 'bg-transparent'
+        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-md' : 'bg-transparent'
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -37,8 +39,8 @@ export const Navbar = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <span className="text-2xl font-bold text-white">
-              ia<span className="text-blue-400">ai</span>
+            <span className="text-2xl font-bold">
+              ia<span className="text-blue-600">ai</span>
             </span>
           </motion.div>
 
@@ -63,9 +65,9 @@ export const Navbar = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            <button className="px-6 py-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium hover:shadow-lg hover:scale-105 transition duration-300">
+            <Button variant="primary" size="md">
               Sign Up
-            </button>
+            </Button>
           </motion.div>
 
           {/* Mobile menu button */}
@@ -76,7 +78,7 @@ export const Navbar = () => {
           >
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-white focus:outline-none"
+              className={`${isScrolled ? 'text-blue-900' : 'text-blue-600'} focus:outline-none`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -109,7 +111,7 @@ export const Navbar = () => {
       {/* Mobile menu */}
       {isMobileMenuOpen && (
         <motion.div
-          className="md:hidden bg-indigo-950/95 backdrop-blur-md"
+          className="md:hidden bg-white shadow-lg"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
@@ -122,9 +124,9 @@ export const Navbar = () => {
             <MobileNavLink href="#testimonials" onClick={() => setIsMobileMenuOpen(false)}>Testimonials</MobileNavLink>
             <MobileNavLink href="#pricing" onClick={() => setIsMobileMenuOpen(false)}>Pricing</MobileNavLink>
             <div className="pt-2">
-              <button className="w-full px-6 py-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-medium hover:shadow-lg transition duration-300">
+              <Button variant="primary" size="md" fullWidth>
                 Sign Up
-              </button>
+              </Button>
             </div>
           </div>
         </motion.div>
@@ -142,10 +144,10 @@ const NavLink = ({ href, children }: NavLinkProps) => {
   return (
     <a
       href={href}
-      className="text-gray-200 hover:text-white font-medium transition duration-300 relative group"
+      className="text-neutral-700 hover:text-blue-700 font-medium transition duration-300 relative group"
     >
       {children}
-      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
+      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
     </a>
   );
 };
@@ -161,7 +163,7 @@ const MobileNavLink = ({ href, onClick, children }: MobileNavLinkProps) => {
     <a
       href={href}
       onClick={onClick}
-      className="block text-gray-200 hover:text-white font-medium transition duration-300"
+      className="block text-neutral-700 hover:text-blue-700 font-medium transition duration-300"
     >
       {children}
     </a>
