@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import TextReveal from './shared/TextReveal';
 import GradientText from './shared/GradientText';
 import RotatingText from '../componanents/RotatingText';
-import { Sparkles } from 'lucide-react';
 
 interface AnimatedHeadingProps {
   inView: boolean;
@@ -31,8 +30,8 @@ export const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
     }
   };
 
-  // Words to cycle through for the rotating text - more impactful verbs
-  const rotatingWords = ["accelerate", "transform", "revolutionize", "personalize"];
+  // Words to cycle through for the rotating text - more impactful adjectives
+  const rotatingWords = ["smarter", "faster", "deeper", "better"];
 
   return (
     <motion.h1 
@@ -41,28 +40,17 @@ export const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
       animate={inView ? "visible" : "hidden"}
       variants={fadeInUp}
     >
-      <div className="flex flex-wrap items-center gap-2 mb-2">
-        <TextReveal text="Unlock" delay={0.1} className="font-extrabold" />
-        <TextReveal text="Your" delay={0.2} className="font-extrabold" />
-      </div>
-      
-      <div className="relative mb-2 inline-block">
-        <GradientText 
-          className="relative block leading-tight" 
-          gradientType="custom"
-          customGradient="from-blue-500 via-blue-600 to-indigo-700"
-        >
-          Learning Potential
-        </GradientText>
-        <Sparkles className="absolute -top-4 -right-8 text-amber-400 animate-pulse" size={32} />
-      </div>
-      
-      {/* Fixed layout container for the rotating text and "with AI" */}
-      <div className="flex items-center mt-2">
-        <div className="flex-shrink-0 mr-2">
+      {/* Combined "Learn" and rotating words on the same line */}
+      <div className="flex items-center gap-3 mb-2">
+        <TextReveal 
+          text="Learn" 
+          delay={0.1} 
+          className="font-extrabold text-gray-800" 
+        />
+        <div className="flex-shrink-0">
           <RotatingText
             texts={rotatingWords}
-            mainClassName="px-3 bg-blue-500 text-white overflow-hidden py-1 sm:py-1.5 justify-center rounded-lg"
+            mainClassName="px-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white overflow-hidden py-1 sm:py-1.5 justify-center rounded-lg shadow-sm"
             staggerFrom="last"
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
@@ -73,9 +61,17 @@ export const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
             rotationInterval={2000}
           />
         </div>
-        <div className="flex-shrink-0">
-          <span className="text-blue-600 font-black text-shadow-sm whitespace-nowrap">with AI</span>
-        </div>
+      </div>
+      
+      <div className="relative mt-2">
+        <GradientText 
+          className="relative block leading-tight" 
+          gradientType="custom"
+          customGradient="from-blue-600 via-blue-500 to-indigo-600"
+          animate={true}
+        >
+          with Intelligent AI
+        </GradientText>
       </div>
 
       {/* Hidden paths for guiding user's eye */}
@@ -83,7 +79,7 @@ export const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
         <motion.path
           d="M20,50 C120,30 220,40 320,50"
           fill="none"
-          stroke="rgba(37, 99, 235, 0.3)"
+          stroke="rgba(59, 130, 246, 0.3)"
           strokeWidth="2"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
@@ -92,7 +88,7 @@ export const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
         <motion.path
           d="M20,70 C150,100 250,80 320,70"
           fill="none"
-          stroke="rgba(13, 148, 136, 0.3)"
+          stroke="rgba(79, 70, 229, 0.3)"
           strokeWidth="2"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
