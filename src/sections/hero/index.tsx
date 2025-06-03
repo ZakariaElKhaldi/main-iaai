@@ -125,7 +125,7 @@ export const Hero = () => {
                 variant="primary" 
                 size="lg"
                 className="group relative shadow-md shadow-blue-500/15 hover:shadow-blue-500/30 transition-all duration-300 transform hover:scale-[1.02] px-6 py-3 text-base font-medium rounded-lg"
-                icon={<ArrowRight className="group-hover:translate-x-1 transition-transform duration-300" size={20} />}
+                icon={<ArrowRight className="group-hover:translate-x-1 transition-transform duration-300\" size={20} />}
                 iconPosition="right"
               >
                 Start Learning Today
