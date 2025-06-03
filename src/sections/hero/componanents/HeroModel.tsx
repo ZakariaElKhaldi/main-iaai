@@ -1,32 +1,48 @@
 import { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Float, MeshDistortMaterial, Environment, useGLTF } from '@react-three/drei';
+import { OrbitControls, Float, MeshDistortMaterial, Environment, useGLTF, Html } from '@react-three/drei';
 import * as THREE from 'three';
-import { theme } from '../../../theme';
+import { motion } from 'framer-motion';
 
 interface BrainModelProps {
   isHovered: boolean;
   mousePosition?: { x: number, y: number };
+  isLoading: boolean;
 }
 
 interface OrbitingParticlesProps {
   count: number;
   radius: number;
+  isLoading: boolean;
 }
 
 interface HeroModelProps {
   isHovered: boolean;
 }
 
+/**
+ * Loading spinner component shown while the model loads
+ */
+const LoadingSpinner = () => {
+  return (
+    <Html center>
+      <div className="flex flex-col items-center">
+        <div className="w-12 h-12 rounded-full border-2 border-t-blue-500 border-r-blue-500 border-b-transparent border-l-transparent animate-spin"></div>
+        <p className="mt-4 text-blue-600 text-sm font-medium">Loading AI Brain...</p>
+      </div>
+    </Html>
+  );
+};
+
 // Enhanced 3D brain model with responsive animation
-const BrainModel = ({ isHovered, mousePosition = { x: 0, y: 0 } }: BrainModelProps) => {
+const BrainModel = ({ isHovered, mousePosition = { x: 0, y: 0 }, isLoading }: BrainModelProps) => {
   const mesh = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const isActive = hovered || isHovered;
   
   // Enhanced animation for the mesh
   useFrame((state) => {
-    if (!mesh.current) return;
+    if (!mesh.current || isLoading) return;
     
     const t = state.clock.getElapsedTime();
     
@@ -61,14 +77,16 @@ const BrainModel = ({ isHovered, mousePosition = { x: 0, y: 0 } }: BrainModelPro
 
   return (
     <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
+      {isLoading && <LoadingSpinner />}
       <mesh
         ref={mesh}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
+        visible={!isLoading}
       >
         <sphereGeometry args={[1.2, 64, 64]} />
         <MeshDistortMaterial
-          color="#2563EB" // blue-600 from theme
+          color="#2563EB" // blue-600
           attach="material"
           distort={isActive ? 0.4 : 0.3}
           speed={2.5}
@@ -80,16 +98,18 @@ const BrainModel = ({ isHovered, mousePosition = { x: 0, y: 0 } }: BrainModelPro
       </mesh>
       
       {/* Orbiting particles with improved appearance */}
-      <OrbitingParticles count={16} radius={2.2} />
+      <OrbitingParticles count={16} radius={2.2} isLoading={isLoading} />
     </Float>
   );
 };
 
 // Enhanced orbiting particles with varied colors and sizes
-const OrbitingParticles = ({ count, radius }: OrbitingParticlesProps) => {
+const OrbitingParticles = ({ count, radius, isLoading }: OrbitingParticlesProps) => {
   const particles = useRef<(THREE.Mesh | null)[]>([]);
   
   useFrame((state) => {
+    if (isLoading) return;
+    
     const t = state.clock.getElapsedTime();
     
     particles.current.forEach((particle, i) => {
@@ -109,6 +129,9 @@ const OrbitingParticles = ({ count, radius }: OrbitingParticlesProps) => {
       // Pulse size effect
       const scale = 0.8 + Math.sin(t * 0.6 + i * 0.3) * 0.2;
       particle.scale.set(scale, scale, scale);
+
+      // Only visible when not loading
+      particle.visible = !isLoading;
     });
   });
   
@@ -136,6 +159,7 @@ const OrbitingParticles = ({ count, radius }: OrbitingParticlesProps) => {
               0,
               Math.sin((i / count) * Math.PI * 2) * radius
             ]}
+            visible={!isLoading}
           >
             <sphereGeometry args={[getSize(), 16, 16]} />
             <meshStandardMaterial 
@@ -151,11 +175,17 @@ const OrbitingParticles = ({ count, radius }: OrbitingParticlesProps) => {
   );
 };
 
-// Main component with mouse tracking
+// Main component with mouse tracking and loading state
 export const HeroModel = ({ isHovered }: HeroModelProps) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Set loading state
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // Simulate loading time
+    
     const handleMouseMove = (e: MouseEvent) => {
       // Calculate normalized mouse position relative to window center
       const x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -165,16 +195,33 @@ export const HeroModel = ({ isHovered }: HeroModelProps) => {
     };
     
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      clearTimeout(loadingTimeout);
+    };
   }, []);
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full relative">
+      {/* Loading overlay with pulsing effect */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-blue-600/10 rounded-full"
+        initial={{ opacity: 0.7 }}
+        animate={{ 
+          opacity: isLoading ? [0.7, 0.3, 0.7] : 0,
+          scale: isLoading ? [1, 1.05, 1] : 0.95
+        }}
+        transition={{ 
+          opacity: { duration: 1.5, ease: "easeInOut", repeat: Infinity },
+          scale: { duration: 1.5, ease: "easeInOut", repeat: Infinity }
+        }}
+      />
+
       <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
         <ambientLight intensity={0.5} />
         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
         <pointLight position={[-10, -10, -10]} intensity={0.5} />
-        <BrainModel isHovered={isHovered} mousePosition={mousePosition} />
+        <BrainModel isHovered={isHovered} mousePosition={mousePosition} isLoading={isLoading} />
         <Environment preset="city" />
         <OrbitControls 
           enableZoom={false} 

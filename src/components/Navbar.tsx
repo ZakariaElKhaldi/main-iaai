@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useSpring } from 'framer-motion';
 import { Button } from './Button';
 import { theme } from '../theme';
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { 
+    stiffness: 100, 
+    damping: 30, 
+    restDelta: 0.001 
+  });
 
   // Handle scroll effect
   useEffect(() => {
@@ -23,13 +29,19 @@ export const Navbar = () => {
 
   return (
     <motion.header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled ? 'bg-white/95 backdrop-blur-md shadow-md' : 'bg-transparent'
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
     >
+      {/* Scroll Progress Indicator */}
+      <motion.div 
+        className="h-[2px] bg-gradient-to-r from-blue-600 via-blue-400 to-teal-500 origin-left absolute bottom-0 w-full"
+        style={{ scaleX }}
+      />
+      
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
@@ -38,6 +50,7 @@ export const Navbar = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
+            whileHover={{ scale: 1.05 }}
           >
             <span className="text-2xl font-bold">
               ia<span className="text-blue-600">ai</span>
@@ -65,8 +78,18 @@ export const Navbar = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            <Button variant="primary" size="md">
-              Sign Up
+            <Button 
+              variant="primary" 
+              size="md"
+              className="relative overflow-hidden group"
+            >
+              <span className="relative z-10">Sign Up</span>
+              <motion.span 
+                className="absolute inset-0 bg-blue-500 z-0"
+                initial={{ x: "100%" }}
+                whileHover={{ x: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              />
             </Button>
           </motion.div>
 
@@ -147,7 +170,7 @@ const NavLink = ({ href, children }: NavLinkProps) => {
       className="text-neutral-700 hover:text-blue-700 font-medium transition duration-300 relative group"
     >
       {children}
-      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
+      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-teal-500 transition-all duration-300 group-hover:w-full"></span>
     </a>
   );
 };
