@@ -1,10 +1,10 @@
+import React from 'react';
 import { Hero } from './sections/hero';
 import { Navbar } from './components/Navbar';
 import { Container } from './components/Container';
 import { theme } from './theme';
-import { ErrorBoundary } from 'react';
 
-class AppErrorBoundary extends ErrorBoundary {
+class AppErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -45,13 +45,13 @@ const App = () => {
   console.log('App component rendering');
   
   return (
-    <ErrorBoundary fallback={<div>Something went wrong</div>}>
+    <AppErrorBoundary>
       <div className="min-h-screen bg-white text-neutral-800">
         <Navbar />
         <main>
-          <ErrorBoundary fallback={<div>Error loading Hero section</div>}>
+          <AppErrorBoundary>
             <Hero />
-          </ErrorBoundary>
+          </AppErrorBoundary>
           
           {/* Features Section */}
           <section id="features" className="py-12 sm:py-16 md:py-20 bg-blue-50">
@@ -160,7 +160,7 @@ const App = () => {
           </Container>
         </footer>
       </div>
-    </ErrorBoundary>
+    </AppErrorBoundary>
   );
 };
 
