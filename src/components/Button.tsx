@@ -1,6 +1,5 @@
 import { type ReactNode, type ButtonHTMLAttributes } from 'react';
 import { motion, type HTMLMotionProps } from 'framer-motion';
-import { theme } from '../theme';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'text';
 type ButtonSize = 'sm' | 'md' | 'lg';

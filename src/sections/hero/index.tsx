@@ -1,6 +1,5 @@
-import React, { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
-import { Container } from '../../components/Container';
 import AnimatedHeading from './componanents/AnimatedHeading';
 import CallToAction from './componanents/CallToAction';
 import BackgroundElements from './componanents/BackgroundElements';
@@ -37,7 +36,7 @@ export const Hero = () => {
         {/* Content area */}
         <div className="w-full max-w-2xl mb-8 relative">
           {/* Main heading with animated text effects */}
-          <AnimatedHeading inView={inView} scrollYProgress={scrollYProgress} />
+          <AnimatedHeading inView={inView} />
           
           {/* Description text */}
           <motion.p

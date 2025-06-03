@@ -3,7 +3,6 @@ import { Hero } from './sections/hero';
 import { Navbar } from './components/Navbar';
 import { Container } from './components/Container';
 import { Button } from './components/Button';
-import { theme } from './theme';
 import { motion } from 'framer-motion';
 import { ArrowRight, Brain } from 'lucide-react';
 

@@ -1,5 +1,4 @@
 import { type ReactNode, createElement, type ElementType } from 'react';
-import { theme } from '../theme';
 
 interface ContainerProps<T extends ElementType = 'div'> {
   children: ReactNode;

@@ -6,7 +6,6 @@ import RotatingText from '../componanents/RotatingText';
 
 interface AnimatedHeadingProps {
   inView: boolean;
-  scrollYProgress?: any;
 }
 
 /**
@@ -14,8 +13,7 @@ interface AnimatedHeadingProps {
  * Enhanced with modern typography and improved spacing
  */
 export const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
-  inView,
-  scrollYProgress
+  inView
 }) => {
   // Animation variants for fade-in effects
   const fadeInUp = {
