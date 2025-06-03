@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@react-three/drei": "^10.1.2",
+    "@react-three/drei": "^9.98.4",
     "@react-three/fiber": "^9.1.2",
     "framer-motion": "^12.15.0",
     "lucide-react": "^0.511.0",
