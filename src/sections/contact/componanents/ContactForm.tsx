@@ -168,8 +168,6 @@ const ContactForm: React.FC<ContactFormProps> = ({ inView }) => {
             variant="primary"
             size="lg"
             className="w-full justify-center"
-            disabled={formStatus === 'submitting'}
-            onClick={(e) => handleSubmit(e as React.FormEvent)}
           >
             {formStatus === 'submitting' ? (
               <>

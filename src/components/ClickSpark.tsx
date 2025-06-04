@@ -19,7 +19,7 @@ interface Spark {
 }
 
 const ClickSpark: React.FC<ClickSparkProps> = ({
-  sparkColor = "#fff",
+  sparkColor = "#000",
   sparkSize = 10,
   sparkRadius = 15,
   sparkCount = 8,
@@ -28,6 +28,7 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
   extraScale = 1.0,
   children
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sparksRef = useRef<Spark[]>([]); // Stores spark data
   const startTimeRef = useRef<number | null>(null); // Tracks initial timestamp for animation
@@ -118,13 +119,23 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
         const x2 = spark.x + (distance + lineLength) * Math.cos(spark.angle);
         const y2 = spark.y + (distance + lineLength) * Math.sin(spark.angle);
 
-        // Draw the spark line
+        // Draw the spark line with glow effect
         ctx.strokeStyle = sparkColor;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3; // Increased line width
+        
+        // Add glow effect
+        ctx.shadowColor = sparkColor;
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+        
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
+        
+        // Reset shadow to avoid affecting other drawings
+        ctx.shadowBlur = 0;
 
         return true;
       });
@@ -139,13 +150,8 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
     };
   }, [sparkColor, sparkSize, sparkRadius, sparkCount, duration, easeFunc, extraScale]);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
+  const createSparks = useCallback((x: number, y: number) => {
+    console.log('Creating sparks at', x, y);
     const now = performance.now();
     const newSparks: Spark[] = Array.from({length: sparkCount}, (_, i) => ({
       x,
@@ -155,16 +161,40 @@ const ClickSpark: React.FC<ClickSparkProps> = ({
     }));
 
     sparksRef.current.push(...newSparks);
-  };
+  }, [sparkCount]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleClick = (e: MouseEvent) => {
+      if (!canvasRef.current) return;
+      
+      const rect = canvasRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      
+      console.log('Click event detected', { x, y });
+      createSparks(x, y);
+    };
+
+    // Use window level event listener to ensure clicks are captured
+    window.addEventListener('click', handleClick);
+    
+    return () => {
+      window.removeEventListener('click', handleClick);
+    };
+  }, [createSparks]);
 
   return (
     <div
-      className="relative w-full h-full"
-      onClick={handleClick}
+      ref={containerRef}
+      className="relative w-full h-full min-h-screen"
     >
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none z-50"
+        style={{ width: '100%', height: '100%' }}
       />
       {children}
     </div>

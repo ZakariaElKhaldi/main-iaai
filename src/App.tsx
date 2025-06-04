@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Hero } from './sections/hero';
 import { Features } from './sections/features';
 import { About } from './sections/about';
@@ -7,9 +7,6 @@ import { Testimonials } from './sections/testimonials';
 import { Contact } from './sections/contact';
 import { Navbar } from './components/Navbar';
 import { Container } from './components/Container';
-import { Button } from './components/Button';
-import { motion } from 'framer-motion';
-import { ArrowRight, Brain } from 'lucide-react';
 import ClickSpark from './components/ClickSpark';
 
 interface ErrorBoundaryState {
@@ -64,20 +61,20 @@ const App = () => {
   return (
     <AppErrorBoundary>
       <ClickSpark
-        sparkColor="#000"
-        sparkSize={10}
-        sparkRadius={20}
-        sparkCount={10}
-        duration={400}
-        extraScale={1.2}
+        sparkColor="#1E90FF"
+        sparkSize={15}
+        sparkRadius={30}
+        sparkCount={15}
+        duration={600}
+        extraScale={1.6}
       >
-        <div className="min-h-screen bg-white text-neutral-800">
-          <Navbar />
-          <main>
-            <AppErrorBoundary>
-              <Hero />
-            </AppErrorBoundary>
-            
+      <div className="min-h-screen bg-white text-neutral-800">
+        <Navbar />
+        <main>
+          <AppErrorBoundary>
+            <Hero />
+          </AppErrorBoundary>
+          
             <AppErrorBoundary>
               <Features />
             </AppErrorBoundary>
@@ -100,30 +97,30 @@ const App = () => {
               <Contact />
             </AppErrorBoundary>
           </main>
-          
-          <footer className="bg-neutral-800 text-white py-12">
-            <Container maxWidth="2xl">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-                <div>
-                  <h3 className="text-xl font-bold mb-4">iaai</h3>
-                  <p className="text-neutral-300">Transforming education through AI-powered learning experiences.</p>
-                </div>
-                
-                <div>
-                  <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-                  <ul className="space-y-2">
-                    <li><a href="#features" className="text-neutral-300 hover:text-white transition-colors">Features</a></li>
-                    <li><a href="#courses" className="text-neutral-300 hover:text-white transition-colors">Courses</a></li>
-                    <li><a href="#pricing" className="text-neutral-300 hover:text-white transition-colors">Pricing</a></li>
-                  </ul>
-                </div>
+        
+        <footer className="bg-neutral-800 text-white py-12">
+          <Container maxWidth="2xl">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+              <div>
+                <h3 className="text-xl font-bold mb-4">iaai</h3>
+                <p className="text-neutral-300">Transforming education through AI-powered learning experiences.</p>
               </div>
-              <div className="border-t border-neutral-700 mt-8 pt-8 text-center text-neutral-400">
-                <p>&copy; {new Date().getFullYear()} iaai. All rights reserved.</p>
+              
+              <div>
+                <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
+                <ul className="space-y-2">
+                  <li><a href="#features" className="text-neutral-300 hover:text-white transition-colors">Features</a></li>
+                  <li><a href="#courses" className="text-neutral-300 hover:text-white transition-colors">Courses</a></li>
+                  <li><a href="#pricing" className="text-neutral-300 hover:text-white transition-colors">Pricing</a></li>
+                </ul>
               </div>
-            </Container>
-          </footer>
-        </div>
+            </div>
+            <div className="border-t border-neutral-700 mt-8 pt-8 text-center text-neutral-400">
+              <p>&copy; {new Date().getFullYear()} iaai. All rights reserved.</p>
+            </div>
+          </Container>
+        </footer>
+      </div>
       </ClickSpark>
     </AppErrorBoundary>
   );

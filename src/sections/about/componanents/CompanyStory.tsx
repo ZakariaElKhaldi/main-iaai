@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { BookOpen, Target, LightbulbIcon } from 'lucide-react';
+import { cn } from '../../../lib/utils';
+import { Target, LightbulbIcon } from 'lucide-react';
 
 interface CompanyStoryProps {
   inView: boolean;

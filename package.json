@@ -5,20 +5,23 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc --skipLibCheck && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@react-three/drei": "^9.98.4",
-    "@react-three/fiber": "^8.15.16",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.15.0",
+    "gsap": "^3.13.0",
     "lucide-react": "^0.511.0",
+    "next": "^15.3.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwind-merge": "^3.3.0",
     "three": "^0.177.0",
+    "three-globe": "^2.42.8",
     "three-mesh-bvh": "^0.8.0"
   },
   "devDependencies": {

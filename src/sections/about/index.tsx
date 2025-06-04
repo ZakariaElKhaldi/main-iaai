@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { motion, useInView, useScroll } from 'framer-motion';
+import React, { useRef } from 'react';
+import { useInView, useScroll } from 'framer-motion';
 import { Container } from '../../components/Container';
 import AboutHeading from './componanents/AboutHeading';
 import CompanyStory from './componanents/CompanyStory';

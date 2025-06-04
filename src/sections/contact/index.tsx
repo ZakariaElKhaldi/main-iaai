@@ -1,5 +1,6 @@
+import React from 'react';
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { useInView } from 'framer-motion';
 import { Container } from '../../components/Container';
 import ContactHeading from './componanents/ContactHeading';
 import ContactInfo from './componanents/ContactInfo';
