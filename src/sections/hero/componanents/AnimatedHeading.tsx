@@ -33,13 +33,13 @@ export const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
 
   return (
     <motion.h1 
-      className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight mb-6"
+      className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight mb-8"
       initial="hidden"
       animate={inView ? "visible" : "hidden"}
       variants={fadeInUp}
     >
       {/* Combined "Learn" and rotating words on the same line */}
-      <div className="flex items-center gap-3 mb-2">
+      <div className="flex items-center gap-3 mb-4">
         <TextReveal 
           text="Learn" 
           delay={0.1} 
@@ -61,7 +61,7 @@ export const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({
         </div>
       </div>
       
-      <div className="relative mt-2">
+      <div className="relative mt-1 mb-2">
         <GradientText 
           className="relative block leading-tight" 
           gradientType="custom"

@@ -25,12 +25,12 @@ export const Features = () => {
     <section 
       ref={featuresRef}
       id="features"
-      className="relative w-full py-20 md:py-28 bg-gradient-to-tr from-blue-50 via-indigo-50 to-white text-neutral-800 overflow-hidden font-sans"
+      className="relative w-full py-20 md:py-28 bg-gradient-to-tr from-blue-50 via-indigo-50 to-white text-neutral-800 overflow-hidden font-sans isolate"
     >
       {/* Animated background elements */}
       <FeatureBackground />
       
-      <Container maxWidth="2xl" centerContent>
+      <Container maxWidth="2xl" centerContent className="relative z-10">
         {/* Section heading */}
         <FeatureHeading inView={inView} />
         
@@ -50,8 +50,11 @@ export const Features = () => {
 
       {/* Decorative bottom divider */}
       <motion.div 
-        className="absolute bottom-0 left-0 right-0 z-0"
-        style={{ y: useTransform(scrollYProgress, [0, 1], [0, 50]) }}
+        className="absolute bottom-0 left-0 right-0 pointer-events-none"
+        style={{ 
+          y: useTransform(scrollYProgress, [0, 1], [0, 50]),
+          zIndex: -1 
+        }}
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full">
           <path

@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import { Button } from './Button';
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { 
     stiffness: 100, 
@@ -15,34 +17,52 @@ export const Navbar = () => {
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
+      const currentScrollY = window.scrollY;
+      
+      // Determine if we should show/hide the navbar
+      if (currentScrollY > lastScrollY.current && currentScrollY > 150) {
+        // Scrolling down & past threshold - hide navbar
+        setIsVisible(false);
+      } else {
+        // Scrolling up or at the top - show navbar
+        setIsVisible(true);
+      }
+      
+      // Set background change threshold
+      if (currentScrollY > 10) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
       }
+      
+      // Update the last scroll position
+      lastScrollY.current = currentScrollY;
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <motion.header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-md' : 'bg-transparent'
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? 'bg-white/90 backdrop-blur-sm shadow-sm' : 'bg-transparent'
       }`}
       initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      animate={{ 
+        y: isVisible ? 0 : -100,
+        opacity: isVisible ? 1 : 0
+      }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
     >
       {/* Scroll Progress Indicator */}
       <motion.div 
-        className="h-[2px] bg-gradient-to-r from-blue-600 via-blue-400 to-teal-500 origin-left absolute bottom-0 w-full"
+        className="h-[1px] bg-gradient-to-r from-blue-600 via-blue-400 to-teal-500 origin-left absolute bottom-0 w-full"
         style={{ scaleX }}
       />
       
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <motion.div 
             className="flex items-center"
@@ -51,23 +71,23 @@ export const Navbar = () => {
             transition={{ duration: 0.5 }}
             whileHover={{ scale: 1.05 }}
           >
-            <span className="text-2xl font-bold">
+            <span className="text-xl font-bold">
               ia<span className="text-blue-600">ai</span>
             </span>
           </motion.div>
 
           {/* Desktop Navigation */}
           <motion.nav
-            className="hidden md:flex items-center space-x-8"
+            className="hidden md:flex items-center space-x-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <NavLink href="#features">Features</NavLink>
-            <NavLink href="#courses">Courses</NavLink>
             <NavLink href="#about">About</NavLink>
+            <NavLink href="#services">Services</NavLink>
             <NavLink href="#testimonials">Testimonials</NavLink>
-            <NavLink href="#pricing">Pricing</NavLink>
+            <NavLink href="#contact">Contact</NavLink>
           </motion.nav>
 
           {/* CTA Button */}
@@ -79,8 +99,8 @@ export const Navbar = () => {
           >
             <Button 
               variant="primary" 
-              size="md"
-              className="relative overflow-hidden group"
+              size="sm"
+              className="relative overflow-hidden group text-sm"
             >
               <span className="relative z-10">Sign Up</span>
               <motion.span 
@@ -101,10 +121,11 @@ export const Navbar = () => {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className={`${isScrolled ? 'text-blue-900' : 'text-blue-600'} focus:outline-none`}
+              aria-label="Toggle menu"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
+                className="h-5 w-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -133,20 +154,20 @@ export const Navbar = () => {
       {/* Mobile menu */}
       {isMobileMenuOpen && (
         <motion.div
-          className="md:hidden bg-white shadow-lg"
+          className="md:hidden bg-white/95 backdrop-blur-sm shadow-lg"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="px-6 py-4 space-y-4">
+          <div className="px-4 py-3 space-y-3">
             <MobileNavLink href="#features" onClick={() => setIsMobileMenuOpen(false)}>Features</MobileNavLink>
-            <MobileNavLink href="#courses" onClick={() => setIsMobileMenuOpen(false)}>Courses</MobileNavLink>
             <MobileNavLink href="#about" onClick={() => setIsMobileMenuOpen(false)}>About</MobileNavLink>
+            <MobileNavLink href="#services" onClick={() => setIsMobileMenuOpen(false)}>Services</MobileNavLink>
             <MobileNavLink href="#testimonials" onClick={() => setIsMobileMenuOpen(false)}>Testimonials</MobileNavLink>
-            <MobileNavLink href="#pricing" onClick={() => setIsMobileMenuOpen(false)}>Pricing</MobileNavLink>
+            <MobileNavLink href="#contact" onClick={() => setIsMobileMenuOpen(false)}>Contact</MobileNavLink>
             <div className="pt-2">
-              <Button variant="primary" size="md" fullWidth>
+              <Button variant="primary" size="sm" fullWidth>
                 Sign Up
               </Button>
             </div>
@@ -166,7 +187,7 @@ const NavLink = ({ href, children }: NavLinkProps) => {
   return (
     <a
       href={href}
-      className="text-neutral-700 hover:text-blue-700 font-medium transition duration-300 relative group"
+      className="text-neutral-700 hover:text-blue-700 text-sm font-medium transition duration-300 relative group"
     >
       {children}
       <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-teal-500 transition-all duration-300 group-hover:w-full"></span>
@@ -185,7 +206,7 @@ const MobileNavLink = ({ href, onClick, children }: MobileNavLinkProps) => {
     <a
       href={href}
       onClick={onClick}
-      className="block text-neutral-700 hover:text-blue-700 font-medium transition duration-300"
+      className="block text-neutral-700 hover:text-blue-700 text-sm font-medium transition duration-300"
     >
       {children}
     </a>

@@ -28,11 +28,17 @@ export const Button = ({
   const getVariantStyles = (): string => {
     switch (variant) {
       case 'primary':
-        return `bg-blue-600 hover:bg-blue-700 text-white shadow-md`;
+        // Only apply default styles if no custom background is provided in className
+        return className.includes('bg-') 
+          ? 'text-blue-700' 
+          : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md';
       case 'secondary':
         return `bg-teal-600 hover:bg-teal-700 text-white shadow-md`;
       case 'outline':
-        return `bg-transparent border-2 border-blue-600 text-blue-600 hover:bg-blue-50`;
+        // Only apply default border color if no custom border is provided in className
+        return className.includes('border-') 
+          ? 'bg-transparent text-blue-600 hover:bg-blue-50' 
+          : 'bg-transparent border-2 border-blue-600 text-blue-600 hover:bg-blue-50';
       case 'text':
         return `bg-transparent text-blue-600 hover:bg-blue-50 shadow-none`;
       default:

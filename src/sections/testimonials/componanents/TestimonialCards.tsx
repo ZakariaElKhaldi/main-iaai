@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { gsap } from 'gsap';
 
 interface TestimonialCardsProps {
   inView: boolean;
@@ -18,6 +19,8 @@ interface Testimonial {
 
 const TestimonialCards: React.FC<TestimonialCardsProps> = ({ inView }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+  const [autoPlay, setAutoPlay] = useState(true);
   
   // Sample testimonials data
   const testimonials: Testimonial[] = [
@@ -68,14 +71,36 @@ const TestimonialCards: React.FC<TestimonialCardsProps> = ({ inView }) => {
     }
   ];
 
+  // Auto-play functionality
+  useEffect(() => {
+    let interval: number | undefined;
+    
+    if (inView && autoPlay) {
+      interval = window.setInterval(() => {
+        setDirection(1);
+        setCurrentIndex((prevIndex) => 
+          prevIndex === testimonials.length - 3 ? 0 : prevIndex + 1
+        );
+      }, 5000);
+    }
+    
+    return () => {
+      if (interval) window.clearInterval(interval);
+    };
+  }, [inView, autoPlay, testimonials.length]);
+
   // Navigate through testimonials
   const nextTestimonial = () => {
+    setAutoPlay(false); // Pause auto-play when manually navigating
+    setDirection(1);
     setCurrentIndex((prevIndex) => 
       prevIndex === testimonials.length - 3 ? 0 : prevIndex + 1
     );
   };
 
   const prevTestimonial = () => {
+    setAutoPlay(false); // Pause auto-play when manually navigating
+    setDirection(-1);
     setCurrentIndex((prevIndex) => 
       prevIndex === 0 ? testimonials.length - 3 : prevIndex - 1
     );
@@ -93,17 +118,12 @@ const TestimonialCards: React.FC<TestimonialCardsProps> = ({ inView }) => {
     }
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: [0.22, 1, 0.36, 1]
-      }
-    }
-  };
+  // Disable GSAP floating animation to prevent conflicts
+  useEffect(() => {
+    return () => {
+      gsap.killTweensOf('.testimonial-card');
+    };
+  }, []);
 
   return (
     <div className="relative">
@@ -113,57 +133,94 @@ const TestimonialCards: React.FC<TestimonialCardsProps> = ({ inView }) => {
         animate={inView ? "visible" : "hidden"}
         className="w-full"
       >
-        {/* Desktop view - 3 cards side by side */}
-        <div className="hidden md:grid md:grid-cols-3 gap-6">
-          {testimonials.slice(currentIndex, currentIndex + 3).map((testimonial) => (
-            <TestimonialCard 
-              key={testimonial.id} 
-              testimonial={testimonial} 
-              variants={itemVariants}
-            />
-          ))}
+        {/* Desktop view - 3 cards side by side with fixed positioning */}
+        <div className="hidden md:block relative min-h-[450px]">
+          <div className="flex justify-between gap-6">
+            {testimonials.slice(currentIndex, currentIndex + 3).map((testimonial, index) => (
+              <div 
+                key={testimonial.id} 
+                className="w-[32%] flex-shrink-0"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ 
+                    opacity: 1, 
+                    y: 0,
+                    transition: { 
+                      duration: 0.5,
+                      delay: index * 0.1
+                    }
+                  }}
+                  className="testimonial-card h-full"
+                >
+                  <TestimonialCard testimonial={testimonial} />
+                </motion.div>
+              </div>
+            ))}
+          </div>
         </div>
         
         {/* Mobile view - single card */}
-        <div className="md:hidden">
-          <TestimonialCard 
-            testimonial={testimonials[currentIndex]} 
-            variants={itemVariants}
-          />
+        <div className="md:hidden min-h-[350px]">
+          <AnimatePresence initial={false} custom={direction} mode="wait">
+            <motion.div
+              key={testimonials[currentIndex].id}
+              initial={{ opacity: 0, x: direction > 0 ? 100 : -100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: direction < 0 ? 100 : -100 }}
+              transition={{ duration: 0.5 }}
+              className="testimonial-card"
+            >
+              <TestimonialCard testimonial={testimonials[currentIndex]} />
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Navigation buttons */}
-        <div className="flex justify-center mt-8 space-x-2 md:space-x-4">
-          <button
+        <div className="flex justify-center mt-10 space-x-2 md:space-x-4">
+          <motion.button
             onClick={prevTestimonial}
             className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:border-blue-200 transition-colors"
             aria-label="Previous testimonial"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
           >
             <ChevronLeft size={20} />
-          </button>
+          </motion.button>
           
           <div className="flex space-x-2">
-            {testimonials.map((_, index) => (
-              <button
+            {testimonials.slice(0, testimonials.length - 2).map((_, index) => (
+              <motion.button
                 key={index}
-                onClick={() => setCurrentIndex(index)}
+                onClick={() => {
+                  setAutoPlay(false);
+                  setDirection(index > currentIndex ? 1 : -1);
+                  setCurrentIndex(index);
+                }}
                 className={`w-2.5 h-2.5 rounded-full transition-colors ${
                   index >= currentIndex && index < currentIndex + 3 
                     ? "bg-blue-600" 
                     : "bg-gray-300"
                 }`}
                 aria-label={`Go to testimonial ${index + 1}`}
+                whileHover={{ scale: 1.2 }}
+                animate={index >= currentIndex && index < currentIndex + 3 ? 
+                  { scale: [1, 1.2, 1], transition: { duration: 1, repeat: Infinity, repeatDelay: 1 } } : 
+                  {}
+                }
               />
             ))}
           </div>
           
-          <button
+          <motion.button
             onClick={nextTestimonial}
             className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 hover:text-blue-600 hover:border-blue-200 transition-colors"
             aria-label="Next testimonial"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
           >
             <ChevronRight size={20} />
-          </button>
+          </motion.button>
         </div>
       </motion.div>
     </div>
@@ -172,37 +229,65 @@ const TestimonialCards: React.FC<TestimonialCardsProps> = ({ inView }) => {
 
 interface TestimonialCardProps {
   testimonial: Testimonial;
-  variants: any;
 }
 
-const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, variants }) => {
+const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial }) => {
   return (
-    <motion.div
-      variants={variants}
-      className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300 h-full flex flex-col"
-    >
-      {/* Rating */}
+    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+      {/* Rating with animation */}
       <div className="flex mb-4">
         {[...Array(5)].map((_, i) => (
-          <Star
+          <motion.div
             key={i}
-            size={18}
-            className={`${
-              i < testimonial.rating ? "text-amber-400 fill-amber-400" : "text-gray-300"
-            }`}
-          />
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ 
+              opacity: 1, 
+              y: 0,
+              transition: { delay: i * 0.1, duration: 0.3 } 
+            }}
+          >
+            <Star
+              size={18}
+              className={`${
+                i < testimonial.rating ? "text-amber-400 fill-amber-400" : "text-gray-300"
+              }`}
+            />
+          </motion.div>
         ))}
       </div>
       
-      {/* Content */}
-      <p className="text-gray-700 mb-6 flex-grow">"{testimonial.content}"</p>
+      {/* Content with animation */}
+      <motion.p 
+        className="text-gray-700 mb-6 flex-grow"
+        initial={{ opacity: 0 }}
+        animate={{ 
+          opacity: 1,
+          transition: { delay: 0.3, duration: 0.5 } 
+        }}
+      >
+        "{testimonial.content}"
+      </motion.p>
       
-      {/* User */}
-      <div className="flex items-center">
-        <img
+      {/* User with animation */}
+      <motion.div 
+        className="flex items-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ 
+          opacity: 1, 
+          y: 0,
+          transition: { delay: 0.5, duration: 0.5 } 
+        }}
+      >
+        <motion.img
           src={testimonial.avatar}
           alt={testimonial.name}
           className="w-12 h-12 rounded-full object-cover mr-4"
+          initial={{ scale: 0.8 }}
+          animate={{ 
+            scale: 1,
+            transition: { delay: 0.6, duration: 0.3, type: "spring" } 
+          }}
+          whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
         />
         <div>
           <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
@@ -210,8 +295,8 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, variants
             {testimonial.role}, {testimonial.company}
           </p>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 };
 

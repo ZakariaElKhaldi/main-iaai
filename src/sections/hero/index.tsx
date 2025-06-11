@@ -23,7 +23,7 @@ export const Hero = () => {
   return (
     <section 
       ref={heroRef}
-      className="relative w-full min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-white text-neutral-800 overflow-hidden font-sans"
+      className="relative w-full min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-white text-neutral-800 overflow-hidden font-sans isolate"
     >
       {/* Background elements with animations */}
       <BackgroundElements />
@@ -31,10 +31,10 @@ export const Hero = () => {
       {/* Visual guides to direct user attention */}
       <VisualGuides inView={inView} />
       
-      {/* Content container with adjusted padding and positioning */}
-      <div className="relative z-10 flex items-center h-screen py-8 md:py-12 lg:py-20 pt-16 md:pt-20 lg:pt-24 pl-7 sm:pl-8 md:pl-11 lg:pl-16 xl:pl-24 pr-4 sm:pr-6 md:pr-8 lg:pr-12 xl:pr-16">
+      {/* Content container positioned more towards the top */}
+      <div className="relative z-10 flex flex-col h-screen px-7 sm:px-8 md:px-12 lg:px-16 xl:px-24 pt-24 sm:pt-28 md:pt-32">
         {/* Content area */}
-        <div className="w-full max-w-2xl mb-8 relative">
+        <div className="w-full max-w-2xl relative">
           {/* Main heading with animated text effects */}
           <AnimatedHeading inView={inView} />
           
@@ -55,8 +55,11 @@ export const Hero = () => {
 
       {/* Wave divider with parallax effect */}
       <motion.div 
-        className="absolute bottom-0 left-0 right-0 z-0"
-        style={{ y: useTransform(scrollYProgress, [0, 1], [0, 100]) }}
+        className="absolute bottom-0 left-0 right-0 z-0 pointer-events-none"
+        style={{ 
+          y: useTransform(scrollYProgress, [0, 1], [0, 100]),
+          zIndex: -1 
+        }}
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full">
           <path
