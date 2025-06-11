@@ -1,16 +1,32 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Book, PenTool, Award, GraduationCap, BarChart2, Globe, ArrowRight, Sparkles } from 'lucide-react';
+import { Book, PenTool, Award, GraduationCap, BarChart2, Globe, ArrowRight, Sparkles, CheckCircle } from 'lucide-react';
 import { Button } from '../../../components/Button';
 
 interface ServicesListProps {
   inView: boolean;
 }
 
+interface ServiceFeature {
+  text: string;
+}
+
+interface Service {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  color: string;
+  accent: string;
+  gradient: string;
+  stats: string;
+  features: ServiceFeature[];
+}
+
 const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
-  const services = [
+  const services: Service[] = [
     {
       icon: Book,
       title: 'Personalized Learning',
@@ -18,7 +34,12 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
       color: 'from-blue-600 to-cyan-500',
       accent: 'blue',
       gradient: 'bg-gradient-to-br from-blue-50 to-cyan-50',
-      stats: '94% Success Rate'
+      stats: '94% Success Rate',
+      features: [
+        { text: 'Adaptive learning paths' },
+        { text: 'Personalized content delivery' },
+        { text: 'Progress tracking dashboard' }
+      ]
     },
     {
       icon: PenTool,
@@ -27,7 +48,12 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
       color: 'from-indigo-600 to-purple-500',
       accent: 'indigo',
       gradient: 'bg-gradient-to-br from-indigo-50 to-purple-50',
-      stats: '40% Score Boost'
+      stats: '40% Score Boost',
+      features: [
+        { text: 'Practice test simulations' },
+        { text: 'Targeted weakness improvement' },
+        { text: 'Strategic study planning' }
+      ]
     },
     {
       icon: Award,
@@ -36,7 +62,12 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
       color: 'from-purple-600 to-pink-500',
       accent: 'purple',
       gradient: 'bg-gradient-to-br from-purple-50 to-pink-50',
-      stats: '3x Faster Growth'
+      stats: '3x Faster Growth',
+      features: [
+        { text: 'Industry-recognized certifications' },
+        { text: 'Job placement assistance' },
+        { text: 'Career path optimization' }
+      ]
     },
     {
       icon: GraduationCap,
@@ -45,7 +76,12 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
       color: 'from-teal-600 to-green-500',
       accent: 'teal',
       gradient: 'bg-gradient-to-br from-teal-50 to-green-50',
-      stats: '1:1 Guidance'
+      stats: '1:1 Guidance',
+      features: [
+        { text: 'Live coaching sessions' },
+        { text: 'Industry expert matching' },
+        { text: 'Personalized feedback' }
+      ]
     },
     {
       icon: BarChart2,
@@ -54,7 +90,12 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
       color: 'from-amber-600 to-orange-500',
       accent: 'amber',
       gradient: 'bg-gradient-to-br from-amber-50 to-orange-50',
-      stats: 'Real-time Insights'
+      stats: 'Real-time Insights',
+      features: [
+        { text: 'AI-powered analytics' },
+        { text: 'Predictive performance models' },
+        { text: 'Visual learning maps' }
+      ]
     },
     {
       icon: Globe,
@@ -63,7 +104,12 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
       color: 'from-red-600 to-rose-500',
       accent: 'red',
       gradient: 'bg-gradient-to-br from-red-50 to-rose-50',
-      stats: '12 Languages'
+      stats: '12 Languages',
+      features: [
+        { text: 'Immersive language environments' },
+        { text: 'Cultural context learning' },
+        { text: 'Conversation practice with AI' }
+      ]
     }
   ];
 
@@ -112,6 +158,42 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
     }
   };
 
+  const featuresVariants = {
+    collapsed: { 
+      height: 0,
+      opacity: 0,
+      transition: {
+        duration: 0.4,
+        ease: "easeInOut"
+      }
+    },
+    expanded: { 
+      height: "auto",
+      opacity: 1,
+      transition: {
+        duration: 0.4,
+        ease: "easeInOut",
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const featureItemVariants = {
+    collapsed: { opacity: 0, y: 10 },
+    expanded: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.3
+      }
+    }
+  };
+
+  const handleCardClick = (index: number) => {
+    setExpandedIndex(expandedIndex === index ? null : index);
+  };
+
   return (
     <motion.div 
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 perspective-1000"
@@ -122,6 +204,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
       {services.map((service, i) => {
         const Icon = service.icon;
         const isHovered = hoveredIndex === i;
+        const isExpanded = expandedIndex === i;
         
         return (
           <motion.div 
@@ -130,9 +213,20 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
             className="relative group cursor-pointer"
             onMouseEnter={() => setHoveredIndex(i)}
             onMouseLeave={() => setHoveredIndex(null)}
+            onClick={() => handleCardClick(i)}
             whileHover={{ 
               y: -8,
               transition: { duration: 0.3, ease: "easeOut" }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-expanded={isExpanded}
+            aria-label={`${service.title} service information`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleCardClick(i);
+                e.preventDefault();
+              }
             }}
           >
             {/* Glow Effect */}
@@ -144,7 +238,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
             />
             
             {/* Main Card */}
-            <div className={`relative bg-white rounded-2xl overflow-hidden border border-gray-100 group-hover:border-transparent transition-all duration-500 ${service.gradient} backdrop-blur-sm`}>
+            <div className={`relative bg-white rounded-2xl overflow-hidden border border-gray-100 group-hover:border-transparent transition-all duration-500 ${service.gradient} backdrop-blur-sm ${isExpanded ? 'shadow-xl' : 'shadow-md'}`}>
               {/* Animated Background Pattern */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                 <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent" />
@@ -161,7 +255,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                    <Icon className="w-6 h-6" />
+                    <Icon className="w-6 h-6" aria-hidden="true" />
                   </motion.div>
                   
                   <motion.div 
@@ -170,7 +264,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
                     animate={{ opacity: isHovered ? 1 : 0.7, x: isHovered ? 0 : 10 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <Sparkles className="w-3 h-3" />
+                    <Sparkles className="w-3 h-3" aria-hidden="true" />
                     {service.stats}
                   </motion.div>
                 </div>
@@ -193,6 +287,27 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
                   </motion.p>
                 </div>
                 
+                {/* Features List (Expandable) */}
+                <motion.div
+                  className="overflow-hidden mb-6"
+                  initial="collapsed"
+                  animate={isExpanded ? "expanded" : "collapsed"}
+                  variants={featuresVariants}
+                >
+                  <ul className="space-y-2 pt-2">
+                    {service.features.map((feature, index) => (
+                      <motion.li 
+                        key={index}
+                        className="flex items-center gap-2 text-gray-600"
+                        variants={featureItemVariants}
+                      >
+                        <CheckCircle size={16} className={`text-${service.accent}-500`} aria-hidden="true" />
+                        <span>{feature.text}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </motion.div>
+                
                 {/* Action Button */}
                 <motion.div
                   initial={{ opacity: 0.8 }}
@@ -208,16 +323,17 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
                         animate={{ x: isHovered ? 2 : 0 }}
                         transition={{ duration: 0.2 }}
                       >
-                        <ArrowRight size={16} />
+                        <ArrowRight size={16} aria-hidden="true" />
                       </motion.div>
                     }
                     iconPosition="right"
+                    aria-label={`Explore ${service.title}`}
                   >
                     <motion.span
                       animate={{ letterSpacing: isHovered ? '0.5px' : '0px' }}
                       transition={{ duration: 0.2 }}
                     >
-                      Explore Now
+                      {isExpanded ? 'Get Started' : 'Explore Now'}
                     </motion.span>
                   </Button>
                 </motion.div>
@@ -234,6 +350,7 @@ const ServicesList: React.FC<ServicesListProps> = ({ inView }) => {
                   backgroundPosition: ['0% 0%', '100% 100%'],
                   transition: { duration: 1.5, repeat: Infinity }
                 } : {}}
+                aria-hidden="true"
               />
             </div>
           </motion.div>

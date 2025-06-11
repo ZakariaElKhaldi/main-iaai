@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Zap } from 'lucide-react';
 
 interface ServicesHeadingProps {
   inView: boolean;
@@ -43,6 +43,18 @@ const ServicesHeading: React.FC<ServicesHeadingProps> = ({ inView }) => {
     }
   };
 
+  const floatVariants = {
+    hidden: { y: 0 },
+    visible: {
+      y: [-5, 5, -5],
+      transition: {
+        duration: 6,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  };
+
   return (
     <motion.div
       className="text-center relative"
@@ -73,12 +85,31 @@ const ServicesHeading: React.FC<ServicesHeadingProps> = ({ inView }) => {
         </svg>
       </motion.div>
       
+      {/* Floating particles */}
+      <motion.div 
+        className="absolute top-1/4 left-1/4 w-3 h-3 rounded-full bg-blue-400 opacity-60"
+        variants={floatVariants}
+        animate="visible"
+      />
+      <motion.div 
+        className="absolute bottom-1/3 right-1/3 w-2 h-2 rounded-full bg-indigo-400 opacity-60"
+        variants={floatVariants}
+        animate="visible"
+        transition={{ delay: 1 }}
+      />
+      <motion.div 
+        className="absolute top-1/2 right-1/4 w-4 h-4 rounded-full bg-purple-400 opacity-40"
+        variants={floatVariants}
+        animate="visible"
+        transition={{ delay: 2 }}
+      />
+      
       {/* Pre-heading */}
       <motion.div 
-        className="inline-flex items-center gap-2 mb-3 px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium"
+        className="inline-flex items-center gap-2 mb-3 px-4 py-2 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 rounded-full text-sm font-medium shadow-sm"
         variants={itemVariants}
       >
-        <Sparkles size={16} className="text-blue-600" />
+        <Zap size={16} className="text-blue-600" />
         <span>Our Services</span>
       </motion.div>
       
@@ -88,16 +119,16 @@ const ServicesHeading: React.FC<ServicesHeadingProps> = ({ inView }) => {
         variants={itemVariants}
       >
         <span className="relative z-10">Comprehensive Educational</span>
-        <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent block md:inline-block"> Solutions</span>
+        <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent block md:inline-block"> Solutions</span>
         <motion.span 
-          className="absolute bottom-0 left-0 h-3 bg-blue-100 rounded-full -z-10"
+          className="absolute bottom-0 left-0 h-3 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full -z-10"
           variants={highlightVariants}
         ></motion.span>
       </motion.h2>
       
       {/* Subheading */}
       <motion.p 
-        className="text-gray-600 max-w-2xl mx-auto text-lg md:text-xl"
+        className="text-gray-600 max-w-2xl mx-auto text-lg md:text-xl leading-relaxed"
         variants={itemVariants}
       >
         Discover our range of AI-powered educational services designed to enhance
@@ -106,11 +137,35 @@ const ServicesHeading: React.FC<ServicesHeadingProps> = ({ inView }) => {
       
       {/* Animated divider */}
       <motion.div
-        className="w-24 h-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mx-auto mt-8"
+        className="w-24 h-1.5 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-full mx-auto mt-8"
         initial={{ width: 0, opacity: 0 }}
         animate={inView ? { width: 96, opacity: 1 } : { width: 0, opacity: 0 }}
         transition={{ duration: 0.8, delay: 0.6 }}
       ></motion.div>
+      
+      {/* Sparkle effect */}
+      <motion.div 
+        className="absolute -right-4 top-1/4 text-yellow-400"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={inView ? { 
+          scale: [0, 1.2, 1],
+          opacity: [0, 1, 0.8]
+        } : { scale: 0, opacity: 0 }}
+        transition={{ duration: 1, delay: 0.8 }}
+      >
+        <Sparkles size={20} />
+      </motion.div>
+      <motion.div 
+        className="absolute -left-2 bottom-1/4 text-yellow-400"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={inView ? { 
+          scale: [0, 1.2, 1],
+          opacity: [0, 1, 0.8]
+        } : { scale: 0, opacity: 0 }}
+        transition={{ duration: 1, delay: 1 }}
+      >
+        <Sparkles size={16} />
+      </motion.div>
     </motion.div>
   );
 };
